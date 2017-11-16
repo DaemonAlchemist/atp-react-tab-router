@@ -37,8 +37,11 @@
     "mocha": "^4.0.1"
   },
   "dependencies": {
+    "atp-sugar": "^0.8.3",
+    "invariant": "^2.2.2",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.5",
-    "react-redux": "^5.0.6"
+    "react-redux": "^5.0.6",
+    "typeof": "^1.0.0"
   }
 }
