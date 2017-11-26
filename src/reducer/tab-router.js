@@ -7,6 +7,7 @@ import {splice} from 'atp-pointfree';
 export const ADD_TAB = 'atpReactTabRouter/addTab';
 export const REPLACE_TAB = 'atpReactTabRouter/replaceTab';
 export const REMOVE_TAB = 'atpReactTabRouter/removeTab';
+export const SELECT_TAB = 'atpReactTabRouter/selectTab';
 
 //Action creators
 export const addTab = tabEntry => {
@@ -34,16 +35,29 @@ export const removeTab = index => {
     return {type: REMOVE_TAB, index};
 };
 
+export const selectTab = index => {
+    invariant(index >= 0, "index must be a positive integer for the selectTab action creator");
+
+    return {type: SELECT_TAB, index};
+}
+
 const stateKey = 'atpReactTabRouter';
 
 //Selectors
 export const getTabs = getState => getState()[stateKey];
 
+//Util
+const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
+    ...tab,
+    selected: index === curTab
+}));
+
 //Reducer
 export default (state, action) => o(action.type).switch({
-    [ADD_TAB]: () => state.concat(action.tabEntry),
-    [REPLACE_TAB]: () => splice(action.index, 1, action.tabEntry)(state),
-    [REMOVE_TAB]: () => splice(action.index, 1)(state),
+    [ADD_TAB]:     () => _selectTab(state.concat(action.tabEntry),                   state.length),
+    [REPLACE_TAB]: () => _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
+    [REMOVE_TAB]:  () => _selectTab(splice(action.index, 1)(state),                  action.index),
+    [SELECT_TAB]:  () => _selectTab(state,                                           action.index),
     default: () => state
 });
 
