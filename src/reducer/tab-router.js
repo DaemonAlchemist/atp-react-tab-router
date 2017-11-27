@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import typeOf from 'typeof';
 import {o} from 'atp-sugar';
 import {splice} from 'atp-pointfree';
 
@@ -11,20 +10,15 @@ export const SELECT_TAB = 'atpReactTabRouter/selectTab';
 
 //Action creators
 export const addTab = tabEntry => {
-    invariant(
-        typeOf(tabEntry) === 'tabentry',
-        "You must provide a valid TabEntry object to the addTab action creator"
-    );
+    invariant(tabEntry.label, "A label is required to create a tab router entry");
+    invariant(tabEntry.path, "A path is required to create a tab router entry");
 
     return {type: ADD_TAB, tabEntry};
 };
 
 export const replaceTab = (index, tabEntry) => {
-    invariant(index >= 0, "index must be a positive integer for the replaceTab action creator");
-    invariant(
-        typeOf(tabEntry) === 'tabentry',
-        "You must provide a valid TabEntry object to the replaceTab action creator"
-    );
+    invariant(tabEntry.label, "A label is required to create a tab router entry");
+    invariant(tabEntry.path, "A path is required to create a tab router entry");
 
     return {type: REPLACE_TAB, index, tabEntry};
 };
@@ -41,10 +35,24 @@ export const selectTab = index => {
     return {type: SELECT_TAB, index};
 }
 
-const stateKey = 'atpReactTabRouter';
+export const stateKey = 'atpReactTabRouter';
 
 //Selectors
-export const getTabs = getState => getState()[stateKey];
+const _getTabs = tabs => tabs.map((tab, index) => ({...tab, index}));
+export const getTabs = getState => _getTabs(getState()[stateKey]);
+
+const _indexOfTab = (tabs, path) => _getTabs(tabs)
+    .filter(tab => tab.path === path)
+    .concat({index: undefined})[0]
+    .index;
+export const indexOfTab = (getState, path) => _indexOfTab(getTabs(getState), path);
+
+const _hasTab = (tabs, path) => typeof _indexOfTab(tabs, path) !== 'undefined';
+export const hasTab = (getState, path) => _hasTab(getTabs(getState), path);
+
+export const selectedTab = getState => getTabs(getState)
+    .filter(tab => tab.selected)
+    .concat({index: undefined})[0].index;
 
 //Util
 const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
@@ -53,11 +61,15 @@ const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
 }));
 
 //Reducer
-export default (state, action) => o(action.type).switch({
-    [ADD_TAB]:     () => _selectTab(state.concat(action.tabEntry),                   state.length),
-    [REPLACE_TAB]: () => _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
-    [REMOVE_TAB]:  () => _selectTab(splice(action.index, 1)(state),                  action.index),
-    [SELECT_TAB]:  () => _selectTab(state,                                           action.index),
+export default (state = [], action) => o(action.type).switch({
+    [ADD_TAB]: () => _hasTab(state, action.tabEntry.path)
+        ? _selectTab(state, _indexOfTab(state, action.tabEntry.path))
+        : _selectTab(state.concat(action.tabEntry), state.length),
+    [REPLACE_TAB]: () =>
+        _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
+    [REMOVE_TAB]:  () =>
+        _selectTab(splice(action.index, 1)(state), action.index),
+    [SELECT_TAB]:  () =>
+        _selectTab(state, action.index),
     default: () => state
 });
-
