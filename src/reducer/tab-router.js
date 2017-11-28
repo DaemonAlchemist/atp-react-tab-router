@@ -67,8 +67,12 @@ export default (state = [], action) => o(action.type).switch({
         : _selectTab(state.concat(action.tabEntry), state.length),
     [REPLACE_TAB]: () =>
         _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
-    [REMOVE_TAB]:  () =>
-        _selectTab(splice(action.index, 1)(state), action.index),
+    [REMOVE_TAB]:  () => state[action.index].selected
+        ? _selectTab(
+            splice(action.index, 1)(state),
+            action.index === state.length - 1 ? state.length - 2 : action.index
+        )
+        : splice(action.index, 1)(state),
     [SELECT_TAB]:  () =>
         _selectTab(state, action.index),
     default: () => state
