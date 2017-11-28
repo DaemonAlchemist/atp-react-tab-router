@@ -61,6 +61,10 @@ const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
 }));
 
 //Reducer
+//TODO:  Update URL when removing a tab
+//TODO:  Update selected tab when using browser back and forward buttons
+//TODO:  Re-open a tab when using the browser back and forward buttons
+//TODO:  Handle browser nav when a tab has been replaced with another (perhaps remove replace functionality instead)
 export default (state = [], action) => o(action.type).switch({
     [ADD_TAB]: () => _hasTab(state, action.tabEntry.path)
         ? _selectTab(state, _indexOfTab(state, action.tabEntry.path))

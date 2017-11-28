@@ -13,7 +13,6 @@ export default connect(
             console.log("Selecting tab");
             dispatch(selectTab(index));
         },
-        //TODO:  Update URL when removing a tab
         onClose: (index, path) => () => {
             console.log("Closing tab");
             dispatch(removeTab(index))
