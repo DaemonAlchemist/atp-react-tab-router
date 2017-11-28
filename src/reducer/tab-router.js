@@ -1,6 +1,9 @@
 import invariant from "invariant";
 import {o} from 'atp-sugar';
 import {splice} from 'atp-pointfree';
+import {push} from 'react-router-redux';
+
+export const stateKey = 'atpReactTabRouter';
 
 //Action types
 export const ADD_TAB = 'atpReactTabRouter/addTab';
@@ -23,19 +26,26 @@ export const replaceTab = (index, tabEntry) => {
     return {type: REPLACE_TAB, index, tabEntry};
 };
 
-export const removeTab = index => {
+export const removeTab = index => (dispatch, getState) => {
     invariant(index >= 0, "index must be a positive integer for the replaceTab action creator");
 
-    return {type: REMOVE_TAB, index};
+    const curTab = selectedTab(getState);
+    const tabCount = getTabs(getState).length;
+    const newIndex =
+        curTab !== index       ? curTab       :
+        index === tabCount - 1 ? tabCount - 2 :
+                                 index;
+
+    dispatch({type: REMOVE_TAB, index});
+    dispatch(push(getTabs(getState)[newIndex].path));
+    dispatch(selectTab(newIndex));
 };
 
 export const selectTab = index => {
     invariant(index >= 0, "index must be a positive integer for the selectTab action creator");
 
     return {type: SELECT_TAB, index};
-}
-
-export const stateKey = 'atpReactTabRouter';
+};
 
 //Selectors
 const _getTabs = tabs => tabs.map((tab, index) => ({...tab, index}));
@@ -61,7 +71,6 @@ const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
 }));
 
 //Reducer
-//TODO:  Update URL when removing a tab
 //TODO:  Update selected tab when using browser back and forward buttons
 //TODO:  Re-open a tab when using the browser back and forward buttons
 //TODO:  Handle browser nav when a tab has been replaced with another (perhaps remove replace functionality instead)
@@ -69,15 +78,8 @@ export default (state = [], action) => o(action.type).switch({
     [ADD_TAB]: () => _hasTab(state, action.tabEntry.path)
         ? _selectTab(state, _indexOfTab(state, action.tabEntry.path))
         : _selectTab(state.concat(action.tabEntry), state.length),
-    [REPLACE_TAB]: () =>
-        _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
-    [REMOVE_TAB]:  () => state[action.index].selected
-        ? _selectTab(
-            splice(action.index, 1)(state),
-            action.index === state.length - 1 ? state.length - 2 : action.index
-        )
-        : splice(action.index, 1)(state),
-    [SELECT_TAB]:  () =>
-        _selectTab(state, action.index),
+    [REPLACE_TAB]: () => _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
+    [REMOVE_TAB]:  () => splice(action.index, 1)(state),
+    [SELECT_TAB]:  () => _selectTab(state, action.index),
     default: () => state
 });

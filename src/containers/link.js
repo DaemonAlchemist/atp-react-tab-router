@@ -9,8 +9,6 @@ export default connect(
     }),
     (dispatch, props) => ({
         onClick: event => {
-            console.log("Tab router link click handler");
-            console.log(props);
             dispatch(o(props.target).switch({
                 new: () => addTab({label: props.label, path: props.to}),
                 replace: () => replaceTab(props.index, {label: props.label, path: props.to}),
