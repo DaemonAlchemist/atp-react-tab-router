@@ -1,6 +1,6 @@
 
 import React from "react";
-import {Tabs, Tab} from "react-bootstrap";
+import {Tabs, Tab, Col} from "react-bootstrap";
 import {Link} from 'react-router-dom';
 
 export default ({tabs, selectedIndex, onSelect, onClose, routes}) =>
@@ -25,5 +25,7 @@ export default ({tabs, selectedIndex, onSelect, onClose, routes}) =>
                 />
             )}
         </Tabs>
-        {routes}
+        <Col xs={12} style={{paddingTop: "8px"}}>
+            {routes}
+        </Col>
     </div>;
