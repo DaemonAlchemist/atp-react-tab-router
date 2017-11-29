@@ -37,12 +37,13 @@
     "mocha": "^4.0.1"
   },
   "dependencies": {
+    "atp-pointfree": "^0.3.3",
     "atp-sugar": "^0.8.3",
     "invariant": "^2.2.2",
-    "react": "^16.0.0",
+    "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
-    "typeof": "^1.0.0"
+    "react-router-redux": "^4.0.8"
   }
 }
