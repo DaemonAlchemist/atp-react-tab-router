@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import {o} from 'atp-sugar';
 import {splice} from 'atp-pointfree';
-import {push} from 'react-router-redux';
+import {push, LOCATION_CHANGE} from 'react-router-redux';
 
 export const stateKey = 'atpReactTabRouter';
 
@@ -65,8 +65,9 @@ export const selectedTab = getState => getTabs(getState)
     .concat({index: undefined})[0].index;
 
 //Util
-const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
+const _selectTab = (tabs, curTab, newLabel = null) => tabs.map((tab, index) => ({
     ...tab,
+    label: index === curTab && newLabel !== null ? newLabel : tab.label,
     selected: index === curTab
 }));
 
@@ -75,8 +76,11 @@ const _selectTab = (tabs, curTab) => tabs.map((tab, index) => ({
 //TODO:  Re-open a tab when using the browser back and forward buttons
 //TODO:  Handle browser nav when a tab has been replaced with another (perhaps remove replace functionality instead)
 export default (state = [], action) => o(action.type).switch({
+    [LOCATION_CHANGE]: () => state.length === 0
+        ? [{label: action.payload.pathname, path: action.payload.pathname, selected: true}]
+        : state,
     [ADD_TAB]: () => _hasTab(state, action.tabEntry.path)
-        ? _selectTab(state, _indexOfTab(state, action.tabEntry.path))
+        ? _selectTab(state, _indexOfTab(state, action.tabEntry.path), action.tabEntry.label)
         : _selectTab(state.concat(action.tabEntry), state.length),
     [REPLACE_TAB]: () => _selectTab(splice(action.index, 1, action.tabEntry)(state), action.index),
     [REMOVE_TAB]:  () => splice(action.index, 1)(state),
