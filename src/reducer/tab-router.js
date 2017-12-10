@@ -76,7 +76,7 @@ const _selectTab = (tabs, curTab, newLabel = null) => tabs.map((tab, index) => (
 //TODO:  Re-open a tab when using the browser back and forward buttons
 //TODO:  Handle browser nav when a tab has been replaced with another (perhaps remove replace functionality instead)
 export default (state = [], action) => o(action.type).switch({
-    [LOCATION_CHANGE]: () => state.length === 0
+    [LOCATION_CHANGE]: () => state.length === 0 && action.payload.pathname !== "/"
         ? [{label: action.payload.pathname, path: action.payload.pathname, selected: true}]
         : state,
     [ADD_TAB]: () => _hasTab(state, action.tabEntry.path)
