@@ -1,30 +1,29 @@
 
 import React from "react";
-import {Tabs, Tab, Col} from "react-bootstrap";
+import {Col} from "react-bootstrap";
 import {Link} from 'react-router-dom';
+
+//Note:  Using raw Bootstrap markup instead of react-bootstrap components to avoid having nested a tags in tab links
 
 export default ({tabs, selectedIndex, onSelect, onClose, routes}) =>
     <div>
-        <Tabs
-            activeKey={selectedIndex}
-            onSelect={() => {}}
-            id="tabPanel"
-        >
+        <ul className="nav nav-tabs">
             {tabs.map((tab, index) =>
-                <Tab
+                <li
                     key={index}
-                    eventKey={index}
-                    title={
-                        <span>
-                            <Link to={tab.path} onClick={onSelect(index)}>
-                                {tab.label}&nbsp;&nbsp;
-                            </Link>
-                            <i className="fa fa-times" onClick={onClose(index, tab.path)} />
-                        </span>
-                    }
-                />
+                    className={selectedIndex === index ? "active" : ""}
+                >
+                    <Link to={tab.path} onClick={onSelect(index)} style={{paddingRight: "15px"}}>
+                        {tab.label}&nbsp;&nbsp;
+                    </Link>
+                    <i className="fa fa-times" onClick={onClose(index, tab.path)} style={{
+                        position: "absolute",
+                        right: "8px",
+                        top: "8px"
+                    }}/>
+                </li>
             )}
-        </Tabs>
+        </ul>
         <Col xs={12} style={{paddingTop: "8px"}}>
             {routes}
         </Col>
