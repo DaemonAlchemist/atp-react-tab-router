@@ -2,7 +2,7 @@
 import React from "react";
 import {Col} from "react-bootstrap";
 import {Link} from 'react-router-dom';
-
+import {Icon} from 'react-font-awesome-5';
 //Note:  Using raw Bootstrap markup instead of react-bootstrap components to avoid having nested a tags in tab links
 
 export default ({tabs, selectedIndex, onSelect, onClose, routes}) =>
@@ -16,7 +16,7 @@ export default ({tabs, selectedIndex, onSelect, onClose, routes}) =>
                     <Link to={tab.path} onClick={onSelect(index)} style={{paddingRight: "15px"}}>
                         {tab.label}&nbsp;&nbsp;
                     </Link>
-                    <i className="fa fa-times" onClick={onClose(index, tab.path)} style={{
+                    <Icon.Times onClick={onClose(index, tab.path)} style={{
                         position: "absolute",
                         right: "8px",
                         top: "8px"

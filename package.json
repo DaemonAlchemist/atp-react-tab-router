@@ -33,15 +33,16 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "chai": "^4.1.2",
-    "dependency-check": "^2.9.1",
+    "dependency-check": "^2.9.2",
     "mocha": "^4.0.1"
   },
   "dependencies": {
-    "atp-pointfree": "^0.5.0",
+    "atp-pointfree": "^0.5.1",
     "atp-sugar": "^0.8.3",
     "invariant": "^2.2.2",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",
+    "react-font-awesome-5": "^0.2.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^4.0.8"
